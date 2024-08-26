@@ -1,79 +1,123 @@
-import { cn } from '@/lib/utils';
-import { Link, NavLink } from 'react-router-dom';
-import { FaHome } from "react-icons/fa";
-import { TbCoinTaka } from "react-icons/tb";
-import companyLogo from '../assets/logo/logo.png';
-import { MdQuestionMark } from "react-icons/md";
-import { HiMenu,HiX  } from 'react-icons/hi'
 import { useState } from 'react';
-import { IoMdAnalytics } from "react-icons/io";
-import { DollarSign } from 'lucide-react';
+import { FaBars, FaTimes, FaChevronDown, FaChevronRight } from 'react-icons/fa';
 
-const 
-Sidebar = () => {
+const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0); // Track active parent item
+  const [openSubMenu, setOpenSubMenu] = useState(null); // Track open submenu
 
-    const [isOpen, setIsOpen] = useState(false);
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
 
-    const toggleSidebar = () => {
-        setIsOpen(!isOpen);
-    };
+  const handleSetActive = (index) => {
+    setActiveIndex(index);
+    setOpenSubMenu(openSubMenu === index ? null : index); // Toggle submenu
+  };
 
+  const menuItems = [
+    {
+      name: 'Dashboard',
+      submenu: null,
+    },
+    {
+      name: 'Order',
+      submenu: ['Team A', 'Team B', 'Team C'],
+    },
+    {
+      name: 'Product',
+      submenu: ['List', 'Category'],
+    },
+    {
+      name: 'User',
+      submenu: ['user1', 'user2'],
+    },
+    {
+      name: 'Paynment Request',
+      submenu: null,
+    },
+    {
+      name: 'Delivery Charge',
+      submenu: null,
+    },
+    {
+      name: 'Boost Request',
+      submenu: null,
+    },
+    {
+      name: 'Comissions',
+      submenu: null,
+    },
+  ];
 
+  return (
+    <div className="relative min-h-screen">
+      {/* Mobile menu button */}
+      <div className="fixed top-0 left-0 p-4 md:hidden z-20">
+        <button onClick={toggleSidebar} className="text-gray-800">
+          {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+        </button>
+      </div>
 
-    const navItems = [
-        { to: '/user-dashboard/home', icon: FaHome, label: 'Home' },
-        { to: '/user-dashboard/balance', icon: TbCoinTaka, label: 'Balance' },
-        { to: '/equitybased-investment/analytics', icon: IoMdAnalytics, label: 'Analytics' },
-        { to: '/equitybased-investment/wallet', icon: DollarSign, label: 'Wallet' },
-        
-    ];
+      {/* Sidebar Overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-10" onClick={toggleSidebar}></div>
+      )}
 
-
-    
-
-    return (
-        <aside className='bg-[#f8fafc] col-span-2 h-full flex flex-col sticky left-0 top-0 overflow-auto p-4 lg:p-5'>
-        {/* Hamburger Menu Button for Mobile View */}
-        <div className="lg:hidden flex justify-center mb-4">
-            <button onClick={toggleSidebar} className="text-gray-600 focus:outline-none">
-                {isOpen ? <HiX className="text-2xl" /> : <HiMenu className="text-2xl" />}
-            </button>
+      {/* Sidebar */}
+      <div
+        className={`fixed inset-y-0 left-0 bg-gray-800 text-white w-64 transform ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:translate-x-0 transition-transform duration-500 ease-in-out z-20`}
+      >
+        <div className="p-4 flex justify-between items-center">
+          <span className="text-lg font-bold">Brand</span>
+          <button onClick={toggleSidebar} className="md:hidden">
+            <FaTimes size={24} />
+          </button>
         </div>
-        <div className={`flex-1 lg:block ${isOpen ? 'block' : 'hidden'}`}>
-            {/* company logo ------------ */}
-            <div className='mb-10 hidden md:block'>
-                <Link to='/'><img src={companyLogo} alt='company logo'></img></Link>
-            </div>
-            <nav className="flex flex-col gap-4">
-                {navItems.map(({ to, icon: Icon, label }) => (
-                    <NavLink
-                        key={to}
-                        to={to}
-                        className={({ isActive }) => cn("md:p-3 bg-white rounded-sm border shadow-sm font-semibold text-black transition-all flex gap-2", {
-                            'bg-[#4338CA] text-white': isActive,
-                        })}
+        <nav className="mt-10">
+          {menuItems.map((item, index) => (
+            <div key={index}>
+              <a
+                href="#"
+                className={`flex items-center justify-between py-2.5 px-4 rounded transition-all duration-300 hover:bg-gray-700 ${
+                  activeIndex === index ? 'bg-gray-700' : ''
+                }`}
+                onClick={() => handleSetActive(index)}
+              >
+                <span>{item.name}</span>
+                {item.submenu && (
+                  <span>
+                    {openSubMenu === index ? <FaChevronDown /> : <FaChevronRight />}
+                  </span>
+                )}
+              </a>
+              {item.submenu && openSubMenu === index && (
+                <div className="pl-6">
+                  {item.submenu.map((subItem, subIndex) => (
+                    <a
+                      href="#"
+                      key={subIndex}
+                      className="block py-2.5 px-4 rounded transition-all duration-300 hover:bg-gray-600"
                     >
-                        <div className='mx-auto md:mx-0 md:truncate md:flex gap-2'>
-                            <Icon className="shrink-0 size-6" />
-                            <span className="truncate hidden md:block">{label}</span>
-                        </div>
-                    </NavLink>
-                ))}
-            </nav>
-        </div>
-        {/* Footer section-------------- */}
-        <div className="hidden md:block bg-[#EBEEFF] max-w-lg p-4 shadow-md rounded-lg mt-12 relative">
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#4338CA] rounded-full">
-                <span className="text-3xl text-white"><MdQuestionMark /></span>
+                      {subItem}
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
-            <h1 className="text-xs font-bold mb-2 mt-2 text-center">Need Help with Easydrop</h1>
-            <div className='flex justify-center'>
-                <button className='rounded-sm bg-[#4338CA] text-white p-2 text-xs font-semibold'><Link to='/'>Go to Help Center</Link></button>
-            </div>
-        </div>
-    </aside>
-    
-    );
+          ))}
+        </nav>
+      </div>
+
+      {/* Main content area */}
+      <div className="relative p-10">
+        <h1 className="text-2xl font-bold">Main Content</h1>
+        {/* Add your main content here */}
+      </div>
+    </div>
+  );
 };
 
 export default Sidebar;
