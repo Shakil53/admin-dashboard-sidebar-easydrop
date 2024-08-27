@@ -14,10 +14,18 @@ const Sidebar = () => {
   };
 
   const handleSetActive = (index, hasSubmenu) => {
+    // Toggle submenu only, don't close the sidebar
     setOpenSubMenu(openSubMenu === index ? null : index);
 
-    // Close the sidebar when an item is clicked on mobile
-    if (!hasSubmenu || isOpen) {
+    // If there's no submenu or the screen is larger than mobile, close the sidebar
+    if (!hasSubmenu && isOpen) {
+      setIsOpen(false);
+    }
+  };
+
+  const handleSubmenuClick = () => {
+    // Close the sidebar when a submenu item is clicked
+    if (isOpen) {
       setIsOpen(false);
     }
   };
@@ -103,7 +111,7 @@ const Sidebar = () => {
                       className={`block py-2 px-4 rounded ${
                         location.pathname === subItem.to ? 'bg-[#139FAD] text-white' : 'hover:bg-gray-200'
                       }`}
-                      onClick={() => setIsOpen(false)} // Close sidebar on submenu click
+                      onClick={handleSubmenuClick} // Close sidebar on submenu click
                     >
                       {subItem.name}
                     </NavLink>
