@@ -1,21 +1,25 @@
 import { useState } from 'react';
 import { FaBars, FaTimes, FaChevronDown, FaChevronRight } from 'react-icons/fa';
-import { NavLink } from 'react-router-dom';
-import companyIcon from '../assets/logo/companyLogo.png'
-import companyName from '../assets/logo/company-name.png'
+import { NavLink, useLocation } from 'react-router-dom';
+import companyIcon from '../assets/logo/companyLogo.png';
+import companyName from '../assets/logo/company-name.png';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(null);
   const [openSubMenu, setOpenSubMenu] = useState(null);
+  const location = useLocation();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleSetActive = (index) => {
-    setActiveIndex(index);
+  const handleSetActive = (index, hasSubmenu) => {
     setOpenSubMenu(openSubMenu === index ? null : index);
+
+    // Close the sidebar when an item is clicked on mobile
+    if (!hasSubmenu || isOpen) {
+      setIsOpen(false);
+    }
   };
 
   const menuItems = [
@@ -30,7 +34,7 @@ const Sidebar = () => {
     {
       name: 'Product',
       submenu: [
-        { name: 'List', to: '/product/list' },
+        { name: 'List', to: '/admin-dashboard/product/list' },
         { name: 'Category', to: '/product/category' },
       ],
     },
@@ -69,8 +73,8 @@ const Sidebar = () => {
       >
         <div className="p-4">
           <NavLink to="/" className="text-lg font-bold">
-            <span><img src={companyIcon}></img></span>
-            <span><img src={companyName}></img></span>
+            <span><img className='mx-auto h-5 sm:h-10' src={companyIcon} alt="Company Icon" /></span>
+            <span><img className='mx-auto h-4 sm:h-8' src={companyName} alt="Company Name" /></span>
           </NavLink>
         </div>
         <nav className="mt-10">
@@ -79,9 +83,9 @@ const Sidebar = () => {
               <NavLink
                 to={item.to || '#'}
                 className={`flex items-center justify-between py-2.5 px-4 rounded ${
-                  activeIndex === index ? 'bg-[#139FAD] text-white' : ''
+                  !item.submenu && location.pathname === item.to ? 'bg-[#139FAD] text-white' : ''
                 }`}
-                onClick={() => handleSetActive(index)}
+                onClick={() => handleSetActive(index, !!item.submenu)}
               >
                 <span>{item.name}</span>
                 {item.submenu && (
@@ -97,10 +101,9 @@ const Sidebar = () => {
                       to={subItem.to}
                       key={subIndex}
                       className={`block py-2 px-4 rounded ${
-                        activeIndex === index && location.pathname === subItem.to
-                          ? 'bg-blue-400 text-white'
-                          : 'hover:bg-gray-200'
+                        location.pathname === subItem.to ? 'bg-[#139FAD] text-white' : 'hover:bg-gray-200'
                       }`}
+                      onClick={() => setIsOpen(false)} // Close sidebar on submenu click
                     >
                       {subItem.name}
                     </NavLink>
