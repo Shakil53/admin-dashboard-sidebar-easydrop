@@ -49,7 +49,9 @@ const Dashboard = () => {
             </div>
             {/* Main Content goes here */}
             <div className="p-3 grid sm:grid-cols-12 gap-4">
-                <div className="sm:col-span-12 min-h-[100px] rounded-lg border p-4 shadow-md"></div>
+                <div className="sm:col-span-12 min-h-[100px] rounded-lg border p-4 shadow-md">
+                    <h1>Deshboard here</h1>
+                </div>
                 {/* <div className="sm:col-span-5 min-h-[100px] rounded-lg border p-4 shadow-md"></div>
                 <div className="sm:col-span-5 min-h-[100px] rounded-lg border p-4 shadow-md"></div> */}
             </div>
